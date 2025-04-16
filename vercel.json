@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/api/voz",
+      "methods": ["POST"],
+      "dest": "/api/voz.js"
+    }
+  ]
+}
