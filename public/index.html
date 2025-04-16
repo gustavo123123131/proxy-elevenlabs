@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>WhatsApp Fake - TipBot</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #0b141a;
+    }
+    .chat-container {
+      width: 100%;
+      max-width: 800px;
+      height: 100vh;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      background-image: url('https://i.imgur.com/Oa1sQDe.png');
+      background-size: cover;
+      background-position: center;
+      position: relative;
+    }
+    .chat-header {
+      padding: 15px;
+      background-color: #202c33;
+      color: white;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      font-size: 16px;
+      border-bottom: 1px solid #2a3942;
+    }
+    .chat-header::before {
+      content: url('https://i.imgur.com/HN0Jb2I.png');
+      width: 36px;
+      height: 36px;
+      margin-right: 10px;
+    }
+    .system-banner {
+      background: #111b21;
+      color: #8696a0;
+      font-size: 12px;
+      padding: 8px 16px;
+      border-bottom: 1px solid #1f2c33;
+      text-align: center;
+    }
+    .chat-messages {
+      flex: 1;
+      padding: 20px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .message {
+      max-width: 60%;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+    .message.bot {
+      background-color: #005c4b;
+      color: white;
+      align-self: flex-start;
+    }
+    .message.user {
+      background-color: #202c33;
+      color: white;
+      align-self: flex-end;
+    }
+  </style>
+</head>
+<body>
+  <div class="chat-container">
+    <div class="chat-header">+55 13 98181-0092 (você)<br><small>Mensagens para mim</small></div>
+    <div class="system-banner">
+      🔒 As "mensagens para mim" são protegidas com a criptografia de ponta a ponta. Nem mesmo o WhatsApp pode ler, ouvir ou compartilhar essas mensagens. Clique para saber mais.
+    </div>
+    <div class="chat-messages" id="chat">
+      <div class="message bot">🔊 Olá! Qual é o seu nome?</div>
+    </div>
+  </div>
+
+  <script>
+    const chat = document.getElementById('chat');
+
+    function addMessage(content, sender = 'bot') {
+      const msg = document.createElement('div');
+      msg.className = `message ${sender}`;
+      msg.textContent = content;
+      chat.appendChild(msg);
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+    async function chipBotEscutarENomear() {
+      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+      recognition.lang = 'pt-BR';
+      recognition.interimResults = false;
+      recognition.maxAlternatives = 1;
+
+      return new Promise((resolve, reject) => {
+        recognition.onresult = (event) => {
+          const transcript = event.results[0][0].transcript;
+          const nome = transcript.split(' ')[0];
+          addMessage(transcript, 'user');
+          resolve(nome);
+        };
+        recognition.onerror = (event) => reject(event.error);
+        recognition.start();
+      });
+    }
+
+    async function gerarRespostaComNome(nome) {
+      const res = await fetch('/api/tipbot', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nome })
+      });
+      const blob = await res.blob();
+      const url = URL.createObjectURL(blob);
+      setTimeout(() => {
+        const audio = new Audio(url);
+        audio.play();
+        addMessage(`🔊 Olá, ${nome}. Tudo bem? Aqui é a IA do Eleven.`, 'bot');
+      }, 5000);
+    }
+
+    window.addEventListener('load', async () => {
+      const audio = new Audio('./audios/qual-seu-nome.mp3');
+      audio.play();
+
+      audio.onended = async () => {
+        try {
+          const nome = await chipBotEscutarENomear();
+          await gerarRespostaComNome(nome);
+        } catch (err) {
+          addMessage('❌ Não entendi. Pode repetir?', 'bot');
+        }
+      };
+    });
+  </script>
+</body>
+</html>
