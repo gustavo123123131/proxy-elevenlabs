@@ -24,9 +24,11 @@ export default async function handler(req, res) {
       })
     });
 
-    if (!response.ok) {
-      const errorText = await response.text();
-      return res.status(500).json({ error: "Erro na ElevenLabs", detalhe: errorText });
+    const contentType = response.headers.get("content-type");
+
+    // Se for um áudio, não dá pra tratar como JSON
+    if (contentType.includes("audio/mpeg")) {
+      return res.status(500).json({ error: "A resposta foi um áudio bruto, não JSON. Verifique a conta ou modelo usado na ElevenLabs." });
     }
 
     const data = await response.json();
