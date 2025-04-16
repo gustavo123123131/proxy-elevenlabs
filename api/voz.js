@@ -5,21 +5,15 @@ export default async function handler(req, res) {
 
   const { nome } = req.body;
 
-  if (!nome) {
-    return res.status(400).json({ error: "Nome não fornecido" });
-  }
-
-  const texto = `Hmm... ${nome}, que nome gostoso viu... fiquei pensando em você o dia inteiro...`;
-
   try {
-    const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/ShB6BQqbEXZxWO5511Qq", {
+    const response = await fetch("https://api.elevenlabs.io/v1/text-to-speech/BAM1WUXMAifYYVWSQtaA", {
       method: "POST",
       headers: {
-        "xi-api-key": process.env.ELEVEN_API_KEY,
+        "xi-api-key": "sk_3750612c9ab8ef7478d38e43fee4cbc26760dd17391e2a60",
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        text: texto,
+        text: `Hmm... ${nome}, que nome gostoso viu... fiquei pensando em você o dia inteiro.`,
         model_id: "eleven_multilingual_v2",
         voice_settings: {
           stability: 0.4,
@@ -30,15 +24,15 @@ export default async function handler(req, res) {
       })
     });
 
-    const result = await response.json();
-
-    if (!result.audio_url) {
-      return res.status(500).json({ error: "Erro ao gerar áudio" });
+    if (!response.ok) {
+      const errorText = await response.text();
+      return res.status(500).json({ error: "Erro na ElevenLabs", detalhe: errorText });
     }
 
-    return res.status(200).json({ audio: result.audio_url });
+    const data = await response.json();
+    return res.status(200).json({ audio: data.audio_url });
 
   } catch (error) {
-    return res.status(500).json({ error: "Erro interno no servidor" });
+    return res.status(500).json({ error: "Erro no servidor", detalhe: error.message });
   }
 }
