@@ -1,15 +1,15 @@
+import fs from "fs";
+import path from "path";
+
 export default async function handler(req, res) {
-  // ⛑️ HABILITANDO CORS
   res.setHeader("Access-Control-Allow-Origin", "*");
   res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
-  // ⚠️ Tratamento da preflight request (OPTIONS)
   if (req.method === "OPTIONS") {
     return res.status(200).end();
   }
 
-  // Só aceita POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -26,7 +26,7 @@ export default async function handler(req, res) {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          text: `Hmm... ${nome}, que nome gostoso viu... fiquei pensando em você o dia inteiro...`,
+          text: `Olá, ${nome}, tudo bem? Aqui é a voz da Eleven Labs.`,
           model_id: "eleven_multilingual_v2",
           voice_settings: {
             stability: 0.4,
@@ -38,19 +38,19 @@ export default async function handler(req, res) {
       }
     );
 
-    if (!response.ok) {
-      const erro = await response.text();
-      return res.status(500).json({ error: "Erro na ElevenLabs", detalhe: erro });
-    }
-
     const buffer = await response.arrayBuffer();
-    const base64Audio = Buffer.from(buffer).toString("base64");
+    const audioBuffer = Buffer.from(buffer);
 
-    const audioDataUrl = `data:audio/mpeg;base64,${base64Audio}`;
+    const filename = `${nome.toLowerCase().replace(/[^a-z0-9]/gi, "_")}.mp3`;
+    const filePath = path.join(process.cwd(), "public", "audios", filename);
 
-    return res.status(200).json({ audioUrl: audioDataUrl });
+    fs.writeFileSync(filePath, audioBuffer);
+
+    const audioUrl = `https://proxy-elevenlabs.vercel.app/audios/${filename}`;
+
+    return res.status(200).json({ audioUrl });
 
   } catch (error) {
-    return res.status(500).json({ error: "Erro no servidor", detalhe: error.message });
+    return res.status(500).json({ error: "Erro ao gerar áudio", detalhe: error.message });
   }
 }
