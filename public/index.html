@@ -144,10 +144,16 @@
       gerarRespostaComNome(nome);
     }
 
-    // Toca o primeiro áudio assim que o site carrega
+    // Corrige autoplay bloqueado
     window.addEventListener('load', () => {
-      const audio = new Audio('./audios/qual-seu-nome.mp3');
-      audio.play();
+      const audio = new Audio('/audios/qual-seu-nome.mp3');
+      audio.volume = 1.0;
+      audio.play().catch(() => {
+        console.warn('🔒 Autoplay bloqueado. Requer interação.');
+        document.body.addEventListener('click', () => {
+          audio.play();
+        }, { once: true });
+      });
     });
   </script>
 </body>
