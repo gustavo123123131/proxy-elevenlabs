@@ -71,21 +71,49 @@
       color: white;
       align-self: flex-end;
     }
+    .chat-input {
+      display: flex;
+      padding: 10px;
+      background-color: #202c33;
+      border-top: 1px solid #2a3942;
+    }
+    .chat-input input {
+      flex: 1;
+      padding: 10px;
+      border-radius: 20px;
+      border: none;
+      outline: none;
+      font-size: 14px;
+    }
+    .chat-input button {
+      margin-left: 10px;
+      padding: 0 16px;
+      border: none;
+      border-radius: 20px;
+      background-color: #005c4b;
+      color: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="chat-container">
     <div class="chat-header">+55 13 98181-0092 (você)<br><small>Mensagens para mim</small></div>
     <div class="system-banner">
-      🔒 As "mensagens para mim" são protegidas com a criptografia de ponta a ponta. Nem mesmo o WhatsApp pode ler, ouvir ou compartilhar essas mensagens. Clique para saber mais.
+      🔒 As "mensagens para mim" são protegidas com a criptografia de ponta a ponta.
     </div>
     <div class="chat-messages" id="chat">
       <div class="message bot">🔊 Olá! Qual é o seu nome?</div>
+    </div>
+    <div class="chat-input">
+      <input type="text" id="userInput" placeholder="Digite seu nome..." />
+      <button onclick="handleNameSubmit()">Enviar</button>
     </div>
   </div>
 
   <script>
     const chat = document.getElementById('chat');
+    const input = document.getElementById('userInput');
 
     function addMessage(content, sender = 'bot') {
       const msg = document.createElement('div');
@@ -93,24 +121,6 @@
       msg.textContent = content;
       chat.appendChild(msg);
       chat.scrollTop = chat.scrollHeight;
-    }
-
-    async function chipBotEscutarENomear() {
-      const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
-      recognition.lang = 'pt-BR';
-      recognition.interimResults = false;
-      recognition.maxAlternatives = 1;
-
-      return new Promise((resolve, reject) => {
-        recognition.onresult = (event) => {
-          const transcript = event.results[0][0].transcript;
-          const nome = transcript.split(' ')[0];
-          addMessage(transcript, 'user');
-          resolve(nome);
-        };
-        recognition.onerror = (event) => reject(event.error);
-        recognition.start();
-      });
     }
 
     async function gerarRespostaComNome(nome) {
@@ -121,25 +131,23 @@
       });
       const blob = await res.blob();
       const url = URL.createObjectURL(blob);
-      setTimeout(() => {
-        const audio = new Audio(url);
-        audio.play();
-        addMessage(`🔊 Olá, ${nome}. Tudo bem? Aqui é a IA do Eleven.`, 'bot');
-      }, 5000);
+      const audio = new Audio(url);
+      audio.play();
+      addMessage(`🔊 Olá, ${nome}. Tudo bem? Aqui é a IA do Eleven.`, 'bot');
     }
 
-    window.addEventListener('load', async () => {
+    function handleNameSubmit() {
+      const nome = input.value.trim();
+      if (!nome) return;
+      addMessage(nome, 'user');
+      input.value = '';
+      gerarRespostaComNome(nome);
+    }
+
+    // Toca o primeiro áudio assim que o site carrega
+    window.addEventListener('load', () => {
       const audio = new Audio('./audios/qual-seu-nome.mp3');
       audio.play();
-
-      audio.onended = async () => {
-        try {
-          const nome = await chipBotEscutarENomear();
-          await gerarRespostaComNome(nome);
-        } catch (err) {
-          addMessage('❌ Não entendi. Pode repetir?', 'bot');
-        }
-      };
     });
   </script>
 </body>
