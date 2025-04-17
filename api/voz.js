@@ -1,6 +1,3 @@
-import fs from "fs";
-import path from "path";
-
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -36,22 +33,14 @@ export default async function handler(req, res) {
     }
 
     const buffer = await response.arrayBuffer();
-    const audioBuffer = Buffer.from(buffer);
+    const base64Audio = Buffer.from(buffer).toString("base64");
 
-    // Gera o nome do arquivo com base no nome da pessoa
-    const filename = `${nome.toLowerCase().replace(/[^a-z0-9]/gi, "_")}.mp3`;
-    const filePath = path.join(process.cwd(), "public", "audios", filename);
+    // Monta o áudio base64 formatado
+    const audioDataUrl = `data:audio/mpeg;base64,${base64Audio}`;
 
-    // Salva o arquivo localmente (em /public/audios)
-    fs.writeFileSync(filePath, audioBuffer);
-
-    // Gera a URL de acesso ao áudio
-    const audioUrl = `https://proxy-elevenlabs.vercel.app/audios/${filename}`;
-
-    return res.status(200).json({ audioUrl });
+    return res.status(200).json({ audioUrl: audioDataUrl });
 
   } catch (error) {
     return res.status(500).json({ error: "Erro no servidor", detalhe: error.message });
   }
 }
-
