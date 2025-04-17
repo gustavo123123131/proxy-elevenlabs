@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
@@ -7,16 +10,16 @@ export default async function handler(req, res) {
 
   try {
     const response = await fetch(
-      "https://api.elevenlabs.io/v1/text-to-speech/BAM1WUXMAifYYVWSQtaA/stream", // ID DA VOZ NA URL
+      "https://api.elevenlabs.io/v1/text-to-speech/BAM1WUXMAifYYVWSQtaA/stream",
       {
         method: "POST",
         headers: {
-          "xi-api-key": process.env.ELEVEN_API_KEY, // PUXA DA .env
+          "xi-api-key": process.env.ELEVEN_API_KEY,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
           text: `Hmm... ${nome}, que nome gostoso viu... fiquei pensando em você o dia inteiro...`,
-          model_id: "eleven_multilingual_v2", // MODELO PADRÃO
+          model_id: "eleven_multilingual_v2",
           voice_settings: {
             stability: 0.4,
             similarity_boost: 1,
@@ -33,10 +36,22 @@ export default async function handler(req, res) {
     }
 
     const buffer = await response.arrayBuffer();
-    res.setHeader("Content-Type", "audio/mpeg");
-    res.send(Buffer.from(buffer));
+    const audioBuffer = Buffer.from(buffer);
+
+    // Gera o nome do arquivo com base no nome da pessoa
+    const filename = `${nome.toLowerCase().replace(/[^a-z0-9]/gi, "_")}.mp3`;
+    const filePath = path.join(process.cwd(), "public", "audios", filename);
+
+    // Salva o arquivo localmente (em /public/audios)
+    fs.writeFileSync(filePath, audioBuffer);
+
+    // Gera a URL de acesso ao áudio
+    const audioUrl = `https://proxy-elevenlabs.vercel.app/audios/${filename}`;
+
+    return res.status(200).json({ audioUrl });
 
   } catch (error) {
     return res.status(500).json({ error: "Erro no servidor", detalhe: error.message });
   }
 }
+
