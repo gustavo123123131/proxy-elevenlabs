@@ -1,6 +1,16 @@
 {
   "name": "proxy-elevenlabs",
   "version": "1.0.0",
-  "main": "index.js",
+  "description": "",
+  "main": "api/voz.js",
+  "scripts": {
+    "dev": "node api/voz.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "node-fetch": "^3.3.2"
+  },
   "type": "module"
 }
