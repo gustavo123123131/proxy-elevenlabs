@@ -1,160 +1,24 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>WhatsApp Fake - TipBot</title>
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', sans-serif;
-      background-color: #0b141a;
-    }
-    .chat-container {
-      width: 100%;
-      max-width: 800px;
-      height: 100vh;
-      margin: 0 auto;
-      display: flex;
-      flex-direction: column;
-      background-image: url('https://i.imgur.com/Oa1sQDe.png');
-      background-size: cover;
-      background-position: center;
-      position: relative;
-    }
-    .chat-header {
-      padding: 15px;
-      background-color: #202c33;
-      color: white;
-      font-weight: 500;
-      display: flex;
-      align-items: center;
-      font-size: 16px;
-      border-bottom: 1px solid #2a3942;
-    }
-    .chat-header::before {
-      content: url('https://i.imgur.com/HN0Jb2I.png');
-      width: 36px;
-      height: 36px;
-      margin-right: 10px;
-    }
-    .system-banner {
-      background: #111b21;
-      color: #8696a0;
-      font-size: 12px;
-      padding: 8px 16px;
-      border-bottom: 1px solid #1f2c33;
-      text-align: center;
-    }
-    .chat-messages {
-      flex: 1;
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .message {
-      max-width: 60%;
-      padding: 10px 14px;
-      border-radius: 8px;
-      font-size: 14px;
-      line-height: 1.4;
-    }
-    .message.bot {
-      background-color: #005c4b;
-      color: white;
-      align-self: flex-start;
-    }
-    .message.user {
-      background-color: #202c33;
-      color: white;
-      align-self: flex-end;
-    }
-    .chat-input {
-      display: flex;
-      padding: 10px;
-      background-color: #202c33;
-      border-top: 1px solid #2a3942;
-    }
-    .chat-input input {
-      flex: 1;
-      padding: 10px;
-      border-radius: 20px;
-      border: none;
-      outline: none;
-      font-size: 14px;
-    }
-    .chat-input button {
-      margin-left: 10px;
-      padding: 0 16px;
-      border: none;
-      border-radius: 20px;
-      background-color: #005c4b;
-      color: white;
-      cursor: pointer;
-    }
-  </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1.0">
+  <title>Áudio Automático</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="chat-container">
-    <div class="chat-header">+55 13 98181-0092 (você)<br><small>Mensagens para mim</small></div>
-    <div class="system-banner">
-      🔒 As "mensagens para mim" são protegidas com a criptografia de ponta a ponta.
-    </div>
-    <div class="chat-messages" id="chat">
-      <div class="message bot">🔊 Olá! Qual é o seu nome?</div>
-    </div>
-    <div class="chat-input">
-      <input type="text" id="userInput" placeholder="Digite seu nome..." />
-      <button onclick="handleNameSubmit()">Enviar</button>
-    </div>
+  <div class="container">
+    <button id="start-btn">Clique para começar</button>
+
+    <form id="name-form" class="hidden">
+      <label for="name-input">Qual é seu nome?</label>
+      <input type="text" id="name-input" required />
+      <button type="submit">Enviar</button>
+    </form>
+
+    <div id="loading" class="hidden">Gerando áudio…</div>
   </div>
 
-  <script>
-    const chat = document.getElementById('chat');
-    const input = document.getElementById('userInput');
-
-    function addMessage(content, sender = 'bot') {
-      const msg = document.createElement('div');
-      msg.className = `message ${sender}`;
-      msg.textContent = content;
-      chat.appendChild(msg);
-      chat.scrollTop = chat.scrollHeight;
-    }
-
-    async function gerarRespostaComNome(nome) {
-      const res = await fetch('/api/tipbot', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nome })
-      });
-      const blob = await res.blob();
-      const url = URL.createObjectURL(blob);
-      const audio = new Audio(url);
-      audio.play();
-      addMessage(`🔊 Olá, ${nome}. Tudo bem? Aqui é a IA do Eleven.`, 'bot');
-    }
-
-    function handleNameSubmit() {
-      const nome = input.value.trim();
-      if (!nome) return;
-      addMessage(nome, 'user');
-      input.value = '';
-      gerarRespostaComNome(nome);
-    }
-
-    // Corrige autoplay bloqueado
-    window.addEventListener('load', () => {
-      const audio = new Audio('/audios/qual-seu-nome.mp3');
-      audio.volume = 1.0;
-      audio.play().catch(() => {
-        console.warn('🔒 Autoplay bloqueado. Requer interação.');
-        document.body.addEventListener('click', () => {
-          audio.play();
-        }, { once: true });
-      });
-    });
-  </script>
+  <script src="script.js"></script>
 </body>
 </html>
