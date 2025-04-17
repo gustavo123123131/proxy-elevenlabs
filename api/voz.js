@@ -1,4 +1,15 @@
 export default async function handler(req, res) {
+  // ⛑️ HABILITANDO CORS
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+
+  // ⚠️ Tratamento da preflight request (OPTIONS)
+  if (req.method === "OPTIONS") {
+    return res.status(200).end();
+  }
+
+  // Só aceita POST
   if (req.method !== "POST") {
     return res.status(405).json({ error: "Method not allowed" });
   }
@@ -35,7 +46,6 @@ export default async function handler(req, res) {
     const buffer = await response.arrayBuffer();
     const base64Audio = Buffer.from(buffer).toString("base64");
 
-    // Monta o áudio base64 formatado
     const audioDataUrl = `data:audio/mpeg;base64,${base64Audio}`;
 
     return res.status(200).json({ audioUrl: audioDataUrl });
