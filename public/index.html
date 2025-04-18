@@ -340,35 +340,3 @@
 </body>
 </html>
 <script>
-  // Bloqueia botão direito
-  document.addEventListener('contextmenu', function(e) {
-    e.preventDefault();
-  });
-
-  // Bloqueia F12, Ctrl+U, Ctrl+S, Ctrl+Shift+I, Ctrl+Shift+C, PrintScreen, etc.
-  document.addEventListener('keydown', function(e) {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'C' || e.key === 'J')) ||
-      (e.ctrlKey && (e.key === 'U' || e.key === 'S')) ||
-      e.key === 'PrintScreen'
-    ) {
-      e.preventDefault();
-      return false;
-    }
-  });
-
-  // Bloqueia zoom com Ctrl + Scroll
-  window.addEventListener('wheel', function(e) {
-    if (e.ctrlKey) {
-      e.preventDefault();
-    }
-  }, { passive: false });
-
-  // Bloqueia Ctrl + "+" ou "-" no teclado
-  document.addEventListener('keydown', function(e) {
-    if (e.ctrlKey && (e.key === '+' || e.key === '-' || e.key === '=')) {
-      e.preventDefault();
-    }
-  });
-</script>
