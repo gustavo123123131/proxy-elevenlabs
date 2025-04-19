@@ -365,18 +365,18 @@
     justify-content: space-between;
     font-size: 11px;
     color: #8696a0;
-    width: 100%;
+    width: 180px;      /* igual ao .waveform-container */
     margin-top: -4px;
-    padding: 0 4px;
+    padding: 0;        /* tira o padding extra */
   }
   
   /* em style.css, depois das regras atuais: */
 .audio-avatar-end {
-    order: -1;           /* move esse item pro início */
-    margin-left: 0;      /* remove margem que empurra pra direita */
-    margin-right: 8px;   /* dá um gap entre avatar e player */
+    order: 0;           /* move esse item pro início */
+    margin-left: 8;      /* remove margem que empurra pra direita */
+    margin-right: 0px;   /* dá um gap entre avatar e player */
   }
-    
+
   .audio-avatar-end img {
     width: 32px;
     height: 32px;
