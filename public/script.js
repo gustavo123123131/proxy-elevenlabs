@@ -36,15 +36,18 @@ async function addBotAudioMessage(url) {
         <source src="${url}" type="audio/mpeg">
         Seu navegador não suporta áudio.
       </audio>
-      <img class="waveform" src="https://raw.githubusercontent.com/neguidavb/waveform-fake/main/wave.png" alt="onda sonora">
+      <canvas class="waveform-canvas" width="200" height="30"></canvas>
     </div>
     <img src="images/avatar.jpg" class="audio-avatar end" alt="avatar">
   `;
 
   chat.appendChild(wrapper);
   chat.scrollTop = chat.scrollHeight;
-}
 
+  const canvas = wrapper.querySelector('.waveform-canvas');
+  const audio = wrapper.querySelector('.audio-player');
+  renderWaveform(audio, canvas); // 🟢 isso faz o canvas desenhar a onda do áudio
+}
 
 /**
  * Quando a página carregar, tocar o áudio de boas-vindas
@@ -70,13 +73,11 @@ document.querySelector('.send-button').addEventListener('click', async () => {
 
   const chat = document.querySelector('.chat-content');
 
-  // Adiciona a mensagem do usuário
   const userMsg = document.createElement('div');
   userMsg.className = 'user-msg';
   userMsg.textContent = nome;
   chat.appendChild(userMsg);
 
-  // Limpa o campo
   input.value = '';
 
   try {
@@ -89,10 +90,10 @@ document.querySelector('.send-button').addEventListener('click', async () => {
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
 
-    // Mostra bolha do bot com áudio
+    // 🔊 Mostra bolha de áudio e renderiza onda automaticamente
     addBotAudioMessage(url);
 
-    // Toca o áudio
+    // ▶️ Toca o som
     await playAudio(url);
 
   } catch (err) {
@@ -101,7 +102,55 @@ document.querySelector('.send-button').addEventListener('click', async () => {
   }
 });
 
+
 // Garante que o script só execute depois que o DOM estiver carregado
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {});
+}function renderWaveform(audioElement, canvas) {
+  const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  const source = audioCtx.createMediaElementSource(audioElement);
+  const analyser = audioCtx.createAnalyser();
+  analyser.fftSize = 256;
+
+  const bufferLength = analyser.frequencyBinCount;
+  const dataArray = new Uint8Array(bufferLength);
+
+  source.connect(analyser);
+  analyser.connect(audioCtx.destination);
+
+  const ctx = canvas.getContext('2d');
+
+  function draw() {
+    requestAnimationFrame(draw);
+
+    analyser.getByteTimeDomainData(dataArray);
+
+    ctx.fillStyle = '#202c33'; // fundo
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.lineWidth = 2;
+    ctx.strokeStyle = '#00a884'; // cor da onda
+
+    ctx.beginPath();
+    const sliceWidth = canvas.width * 1.0 / bufferLength;
+    let x = 0;
+
+    for(let i = 0; i < bufferLength; i++) {
+      const v = dataArray[i] / 128.0;
+      const y = v * canvas.height / 2;
+
+      if(i === 0) {
+        ctx.moveTo(x, y);
+      } else {
+        ctx.lineTo(x, y);
+      }
+
+      x += sliceWidth;
+    }
+
+    ctx.lineTo(canvas.width, canvas.height / 2);
+    ctx.stroke();
+  }
+
+  draw();
 }
