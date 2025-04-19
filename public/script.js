@@ -17,22 +17,15 @@ async function playAudio(src) {
 async function addBotAudioMessage(url) {
   const chat = document.querySelector('.chat-content');
 
-  // Passo 1: adiciona indicador "gravando"
   const typing = document.createElement('div');
   typing.className = 'typing-indicator';
   typing.textContent = 'gravando áudio...';
   chat.appendChild(typing);
-
-  // Força scroll pra baixo (opcional)
   chat.scrollTop = chat.scrollHeight;
 
-  // Passo 2: espera 2 segundos
   await new Promise(resolve => setTimeout(resolve, 2000));
-
-  // Passo 3: remove indicador
   typing.remove();
 
-  // Passo 4: adiciona áudio formatado estilo zap
   const wrapper = document.createElement('div');
   wrapper.className = 'audio-message';
 
