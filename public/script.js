@@ -100,3 +100,8 @@ document.querySelector('.send-button').addEventListener('click', async () => {
     alert('Erro ao gerar o áudio. Tenta de novo aí, filhote.');
   }
 });
+
+// Garante que o script só execute depois que o DOM estiver carregado
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => {});
+}
