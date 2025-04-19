@@ -18,15 +18,14 @@ async function addBotAudioMessage(blobOrFile) {
 
 // 1. monta HTML
 wrapper.innerHTML = `
-<button class="play-button">▶️</button>
-<div class="waveform-container" id="${waveId}"></div>
-<div class="timestamps">
-  <span class="current-time">0:00</span>
-  <span class="duration">0:00</span>
-</div>
-<div class="audio-avatar-end">
-  <img src="images/avatar.jpg" alt="avatar">
-</div>
+  <button class="play-button">▶️</button>
+  <div class="waveform-container" id="${waveId}"></div>
+  <div class="timestamps">
+    <span class="current-time">0:00</span>
+  </div>
+  <div class="audio-avatar-end">
+    <img src="images/avatar.jpg" alt="avatar">
+  </div>
 `;
 
 chat.appendChild(wrapper);
