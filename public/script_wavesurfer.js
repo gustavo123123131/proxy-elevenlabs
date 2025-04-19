@@ -29,15 +29,16 @@ async function addBotAudioMessage(blobOrFile) {
   chat.scrollTop = chat.scrollHeight;
 
   const wavesurfer = WaveSurfer.create({
-    container: '#' + waveId,
+    container: `#${waveId}`,
     waveColor: '#00a884',
     progressColor: '#004c3f',
     barWidth: 2,
     height: 40,
     responsive: true,
-    normalize: true
+    normalize: true,
+    pixelRatio: 1   // ← aqui! força o pixelRatio inteiro
   });
-
+  
   wavesurfer.on('error', (e) => {
     console.error('WaveSurfer erro:', e);
   });

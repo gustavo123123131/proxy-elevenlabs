@@ -315,3 +315,9 @@
     50% { opacity: 0.4; }
   }
   
+  .waveform-static {
+    /* ajusta esse 200px pro tamanho que ficar melhor dentro da bolha */
+    width: 200px;
+    height: 40px;
+  }
+  
