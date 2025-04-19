@@ -45,6 +45,7 @@ async function addBotAudioMessage(url) {
   chat.scrollTop = chat.scrollHeight;
 }
 
+
 /**
  * Quando a página carregar, tocar o áudio de boas-vindas
  */
