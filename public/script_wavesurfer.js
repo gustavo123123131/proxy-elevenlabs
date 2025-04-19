@@ -1,5 +1,5 @@
 // Inicializa a bolha de áudio com WaveSurfer (onda real do áudio)
-async function addBotAudioMessage(url) {
+async function addBotAudioMessage(blobOrFile) {
   const chat = document.querySelector('.chat-content');
 
   const typing = document.createElement('div');
@@ -28,7 +28,6 @@ async function addBotAudioMessage(url) {
   chat.appendChild(wrapper);
   chat.scrollTop = chat.scrollHeight;
 
-  // Inicializa o WaveSurfer
   const wavesurfer = WaveSurfer.create({
     container: '#' + waveId,
     waveColor: '#00a884',
@@ -43,7 +42,7 @@ async function addBotAudioMessage(url) {
     console.error('WaveSurfer erro:', e);
   });
 
-  wavesurfer.load(url);
+  wavesurfer.loadBlob(blobOrFile); // ✅ CORREÇÃO AQUI
 
   const playBtn = wrapper.querySelector('.play-button');
   playBtn.disabled = true;
@@ -59,8 +58,16 @@ async function addBotAudioMessage(url) {
   });
 }
 
+
 window.addEventListener('DOMContentLoaded', async () => {
-  await addBotAudioMessage('/audios/qual-seu-nome.mp3');
+  try {
+    const res = await fetch('/audios/qual-seu-nome.mp3');
+    const blob = await res.blob();
+    const file = new File([blob], "qual-seu-nome.mp3", { type: "audio/mpeg" });
+    await addBotAudioMessage(file);
+  } catch (err) {
+    console.error('Erro ao carregar áudio inicial:', err);
+  }
 });
 
 document.querySelector('.send-button').addEventListener('click', async () => {
@@ -78,11 +85,11 @@ document.querySelector('.send-button').addEventListener('click', async () => {
   try {
     const res = await fetch(`/api/voz?nome=${encodeURIComponent(nome)}`);
     if (!res.ok) throw new Error('Erro ao buscar áudio');
+
     const blob = await res.blob();
     const file = new File([blob], "voz.mp3", { type: "audio/mpeg" });
-    const url = URL.createObjectURL(file);
 
-    await addBotAudioMessage(url);
+    await addBotAudioMessage(file);
   } catch (err) {
     console.error('Erro ao gerar áudio:', err);
     alert('Falha ao gerar o áudio.');
