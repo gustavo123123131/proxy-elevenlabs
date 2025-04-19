@@ -335,7 +335,7 @@
   .play-button {
     border: none;
     background: none;
-    color: #ffffff;
+    color: #00A884;
     font-size: 20px;
     cursor: pointer;
   }
@@ -370,11 +370,13 @@
     padding: 0 4px;
   }
   
-  /* avatar + mic */
-  .audio-avatar-end {
-    position: relative;
-    margin-left: auto;
+  /* em style.css, depois das regras atuais: */
+.audio-avatar-end {
+    order: -1;           /* move esse item pro início */
+    margin-left: 0;      /* remove margem que empurra pra direita */
+    margin-right: 8px;   /* dá um gap entre avatar e player */
   }
+    
   .audio-avatar-end img {
     width: 32px;
     height: 32px;

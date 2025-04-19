@@ -38,8 +38,8 @@ playBtn.disabled = true;
 // 3. inicializa o Wavesurfer
 const wavesurfer = WaveSurfer.create({
 container: `#${waveId}`,
-waveColor: '#9aa0a6',
-progressColor: '#34B7F1',
+waveColor: '#848488',
+progressColor: '#00A884',
 barWidth: 2,
 barGap: 1,
 cursorWidth: 0,
