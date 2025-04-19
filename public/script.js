@@ -1,8 +1,7 @@
 let audioElement;
 
 /**
- * Toca um áudio a partir do caminho.
- * @param {string} src - Caminho do arquivo de áudio
+ * Toca um áudio a partir do caminho (não utilizado diretamente com visualização de onda).
  */
 async function playAudio(src) {
   return new Promise((resolve, reject) => {
@@ -32,7 +31,7 @@ async function addBotAudioMessage(url) {
   wrapper.innerHTML = `
     <img src="images/avatar.jpg" class="audio-avatar" alt="avatar">
     <div class="audio-bubble">
-      <audio controls class="audio-player">
+      <audio class="audio-player" autoplay>
         <source src="${url}" type="audio/mpeg">
         Seu navegador não suporta áudio.
       </audio>
@@ -46,26 +45,20 @@ async function addBotAudioMessage(url) {
 
   const canvas = wrapper.querySelector('.waveform-canvas');
   const audio = wrapper.querySelector('.audio-player');
-  renderWaveform(audio, canvas); // 🟢 isso faz o canvas desenhar a onda do áudio
+
+  audio.addEventListener("play", () => renderWaveform(audio, canvas));
+
+  return audio;
 }
 
-/**
- * Quando a página carregar, tocar o áudio de boas-vindas
- */
 window.addEventListener('DOMContentLoaded', async () => {
   try {
-    // Adiciona bolha visual (opcional)
-    addBotAudioMessage('/audios/qual-seu-nome.mp3');
-    // Toca o áudio inicial
-    await playAudio('/audios/qual-seu-nome.mp3');
+    await addBotAudioMessage('/audios/qual-seu-nome.mp3');
   } catch (err) {
     console.error('Erro ao tocar áudio inicial:', err);
   }
 });
 
-/**
- * Quando o usuário clicar em enviar
- */
 document.querySelector('.send-button').addEventListener('click', async () => {
   const input = document.querySelector('.message-input');
   const nome = input.value.trim();
@@ -77,7 +70,6 @@ document.querySelector('.send-button').addEventListener('click', async () => {
   userMsg.className = 'user-msg';
   userMsg.textContent = nome;
   chat.appendChild(userMsg);
-
   input.value = '';
 
   try {
@@ -90,11 +82,7 @@ document.querySelector('.send-button').addEventListener('click', async () => {
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
 
-    // 🔊 Mostra bolha de áudio e renderiza onda automaticamente
-    addBotAudioMessage(url);
-
-    // ▶️ Toca o som
-    await playAudio(url);
+    await addBotAudioMessage(url);
 
   } catch (err) {
     console.error('Erro ao buscar áudio com nome:', err);
@@ -102,11 +90,11 @@ document.querySelector('.send-button').addEventListener('click', async () => {
   }
 });
 
-
-// Garante que o script só execute depois que o DOM estiver carregado
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', () => {});
-}function renderWaveform(audioElement, canvas) {
+}
+
+function renderWaveform(audioElement, canvas) {
   const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
   const source = audioCtx.createMediaElementSource(audioElement);
   const analyser = audioCtx.createAnalyser();
@@ -125,21 +113,21 @@ if (document.readyState === 'loading') {
 
     analyser.getByteTimeDomainData(dataArray);
 
-    ctx.fillStyle = '#202c33'; // fundo
+    ctx.fillStyle = '#202c33';
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.lineWidth = 2;
-    ctx.strokeStyle = '#00a884'; // cor da onda
+    ctx.strokeStyle = '#00a884';
 
     ctx.beginPath();
     const sliceWidth = canvas.width * 1.0 / bufferLength;
     let x = 0;
 
-    for(let i = 0; i < bufferLength; i++) {
+    for (let i = 0; i < bufferLength; i++) {
       const v = dataArray[i] / 128.0;
       const y = v * canvas.height / 2;
 
-      if(i === 0) {
+      if (i === 0) {
         ctx.moveTo(x, y);
       } else {
         ctx.lineTo(x, y);
