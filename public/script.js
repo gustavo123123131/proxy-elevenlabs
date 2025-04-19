@@ -14,9 +14,25 @@ async function playAudio(src) {
   });
 }
 
-function addBotAudioMessage(url) {
+async function addBotAudioMessage(url) {
   const chat = document.querySelector('.chat-content');
 
+  // Passo 1: adiciona indicador "gravando"
+  const typing = document.createElement('div');
+  typing.className = 'typing-indicator';
+  typing.textContent = 'gravando áudio...';
+  chat.appendChild(typing);
+
+  // Força scroll pra baixo (opcional)
+  chat.scrollTop = chat.scrollHeight;
+
+  // Passo 2: espera 2 segundos
+  await new Promise(resolve => setTimeout(resolve, 2000));
+
+  // Passo 3: remove indicador
+  typing.remove();
+
+  // Passo 4: adiciona áudio formatado estilo zap
   const wrapper = document.createElement('div');
   wrapper.className = 'audio-message';
 
@@ -27,11 +43,13 @@ function addBotAudioMessage(url) {
         <source src="${url}" type="audio/mpeg">
         Seu navegador não suporta áudio.
       </audio>
+      <img class="waveform" src="https://raw.githubusercontent.com/neguidavb/waveform-fake/main/wave.png" alt="onda sonora">
     </div>
     <img src="images/avatar.jpg" class="audio-avatar end" alt="avatar">
   `;
 
   chat.appendChild(wrapper);
+  chat.scrollTop = chat.scrollHeight;
 }
 
 /**

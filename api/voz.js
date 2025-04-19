@@ -54,7 +54,7 @@ export default async function handler(req, res) {
     const buffer = Buffer.from(arrayBuffer);
 
     res.setHeader('Content-Type', 'audio/mpeg');
-    res.send(buffer);
+    res.send(buffer); 
 
   } catch (error) {
     // loga no server e retorna 500

@@ -263,24 +263,8 @@
   .audio-message {
     display: flex;
     align-items: flex-end;
-    gap: 8px;
-    background-color: transparent;
-    margin-top: 8px;
-  }
-  
-  .audio-bubble {
-    background-color: #202c33;
-    padding: 10px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-  }
-  
-  .audio-player {
-    width: 180px;
-    height: 36px;
-    border-radius: 10px;
-    background-color: transparent;
+    gap: 6px;
+    margin: 8px 0;
   }
   
   .audio-avatar {
@@ -291,5 +275,43 @@
   
   .audio-avatar.end {
     margin-left: auto;
+  }
+  
+  .audio-bubble {
+    background-color: #202c33;
+    border-radius: 16px;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .audio-player {
+    background: none;
+    border: none;
+    outline: none;
+    height: 28px;
+    width: auto;
+  }
+  
+  .waveform {
+    height: 24px;
+  }
+  
+  .typing-indicator {
+    align-self: flex-start;
+    background-color: #202c33;
+    color: #00a884;
+    padding: 6px 14px;
+    border-radius: 15px;
+    font-size: 13px;
+    margin-top: 8px;
+    font-style: italic;
+    animation: blink 1s infinite;
+  }
+  
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
   }
   
