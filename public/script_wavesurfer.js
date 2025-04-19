@@ -55,11 +55,9 @@ const s = Math.floor(sec%60).toString().padStart(2,'0');
 return `${m}:${s}`;
 }
 
-// 5. quando estiver pronto, seta duração e libera o play
+// 5. quando o áudio estiver carregado, libera o botão de play
 wavesurfer.on('ready', () => {
-wrapper.querySelector('.duration')
-       .textContent = formatTime(wavesurfer.getDuration());
-playBtn.disabled = false;
+  playBtn.disabled = false;
 });
 
 // 6. a cada frame de áudio, atualiza o tempo corrente
