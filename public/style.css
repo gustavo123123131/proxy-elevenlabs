@@ -314,10 +314,81 @@
     0%, 100% { opacity: 1; }
     50% { opacity: 0.4; }
   }
-  
+
   .waveform-static {
     /* ajusta esse 200px pro tamanho que ficar melhor dentro da bolha */
     width: 200px;
     height: 40px;
+  }
+  
+  /* bolha igual WhatsApp */
+.audio-message {
+    display: inline-flex;
+    align-items: center;
+    background: #2f3337;
+    border-radius: 24px;
+    padding: 6px 8px;
+    gap: 8px;
+  }
+  
+  /* botão ▶️ */
+  .play-button {
+    border: none;
+    background: none;
+    color: #ffffff;
+    font-size: 20px;
+    cursor: pointer;
+  }
+  
+  /* container da onda + pontinho azul */
+  .waveform-container {
+    position: relative;
+    width: 180px;   /* ajuste se quiser maior/menor */
+    height: 32px;
+    margin: 0 4px;
+  }
+  .waveform-container::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 6px;
+    height: 6px;
+    background: #34B7F1;
+    border-radius: 50%;
+  }
+  
+  /* tempos sob a onda */
+  .timestamps {
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: #8696a0;
+    width: 100%;
+    margin-top: -4px;
+    padding: 0 4px;
+  }
+  
+  /* avatar + mic */
+  .audio-avatar-end {
+    position: relative;
+    margin-left: auto;
+  }
+  .audio-avatar-end img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+  .audio-avatar-end::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 14px;
+    height: 14px;
+    background: #34B7F1 url('images/mic.svg') center/8px no-repeat;
+    border: 2px solid #2f3337;
+    border-radius: 50%;
   }
   

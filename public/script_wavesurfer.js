@@ -16,49 +16,68 @@ async function addBotAudioMessage(blobOrFile) {
 
   const waveId = `waveform-${Date.now()}`;
 
-  wrapper.innerHTML = `
-    <img src="images/avatar.jpg" class="audio-avatar" alt="avatar">
-    <div class="audio-bubble">
-      <div id="${waveId}" class="waveform-static"></div>
-      <button class="play-button">▶️</button>
-    </div>
-    <img src="images/avatar.jpg" class="audio-avatar end" alt="avatar">
-  `;
+// 1. monta HTML
+wrapper.innerHTML = `
+<button class="play-button">▶️</button>
+<div class="waveform-container" id="${waveId}"></div>
+<div class="timestamps">
+  <span class="current-time">0:00</span>
+  <span class="duration">0:00</span>
+</div>
+<div class="audio-avatar-end">
+  <img src="images/avatar.jpg" alt="avatar">
+</div>
+`;
 
-  chat.appendChild(wrapper);
-  chat.scrollTop = chat.scrollHeight;
+chat.appendChild(wrapper);
 
-  const wavesurfer = WaveSurfer.create({
-    container: `#${waveId}`,
-    waveColor: '#00a884',
-    progressColor: '#004c3f',
-    barWidth: 2,
-    height: 40,
-    responsive: true,
-    normalize: true,
-    pixelRatio: 1   // ← aqui! força o pixelRatio inteiro
-  });
-  
-  wavesurfer.on('error', (e) => {
-    console.error('WaveSurfer erro:', e);
-  });
+// 2. já captura o playBtn aqui
+const playBtn = wrapper.querySelector('.play-button');
+playBtn.disabled = true;
 
-  wavesurfer.loadBlob(blobOrFile); // ✅ CORREÇÃO AQUI
+// 3. inicializa o Wavesurfer
+const wavesurfer = WaveSurfer.create({
+container: `#${waveId}`,
+waveColor: '#9aa0a6',
+progressColor: '#34B7F1',
+barWidth: 2,
+barGap: 1,
+cursorWidth: 0,
+height: 32,
+responsive: true,
+normalize: true,
+pixelRatio: 1
+});
 
-  const playBtn = wrapper.querySelector('.play-button');
-  playBtn.disabled = true;
-
-  wavesurfer.on('ready', () => {
-    playBtn.disabled = false;
-    console.log("✔️ Onda pronta para exibir");
-  });
-
-  playBtn.addEventListener('click', () => {
-    wavesurfer.playPause();
-    playBtn.textContent = wavesurfer.isPlaying() ? '⏸️' : '▶️';
-  });
+// 4. formatação de tempo
+function formatTime(sec) {
+const m = Math.floor(sec/60);
+const s = Math.floor(sec%60).toString().padStart(2,'0');
+return `${m}:${s}`;
 }
 
+// 5. quando estiver pronto, seta duração e libera o play
+wavesurfer.on('ready', () => {
+wrapper.querySelector('.duration')
+       .textContent = formatTime(wavesurfer.getDuration());
+playBtn.disabled = false;
+});
+
+// 6. a cada frame de áudio, atualiza o tempo corrente
+wavesurfer.on('audioprocess', () => {
+wrapper.querySelector('.current-time')
+       .textContent = formatTime(wavesurfer.getCurrentTime());
+});
+
+// 7. carrega e conecta o blob
+wavesurfer.loadBlob(blobOrFile);
+
+// 8. play/pause
+playBtn.addEventListener('click', () => {
+wavesurfer.playPause();
+playBtn.textContent = wavesurfer.isPlaying() ? '⏸️' : '▶️';
+});
+}
 
 window.addEventListener('DOMContentLoaded', async () => {
   try {
