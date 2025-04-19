@@ -260,7 +260,36 @@
     max-width: 80%;
   }
   
+  .audio-message {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+    background-color: transparent;
+    margin-top: 8px;
+  }
+  
+  .audio-bubble {
+    background-color: #202c33;
+    padding: 10px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+  }
+  
   .audio-player {
-    width: 220px;
+    width: 180px;
+    height: 36px;
+    border-radius: 10px;
+    background-color: transparent;
+  }
+  
+  .audio-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+  }
+  
+  .audio-avatar.end {
+    margin-left: auto;
   }
   

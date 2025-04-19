@@ -14,21 +14,21 @@ async function playAudio(src) {
   });
 }
 
-/**
- * Adiciona uma bolha de áudio estilo mensagem do bot
- * @param {string} url - URL do áudio a ser tocado
- */
 function addBotAudioMessage(url) {
   const chat = document.querySelector('.chat-content');
 
   const wrapper = document.createElement('div');
-  wrapper.className = 'bot-msg';
+  wrapper.className = 'audio-message';
 
   wrapper.innerHTML = `
-    <audio controls class="audio-player">
-      <source src="${url}" type="audio/mpeg">
-      Seu navegador não suporta áudio.
-    </audio>
+    <img src="images/avatar.jpg" class="audio-avatar" alt="avatar">
+    <div class="audio-bubble">
+      <audio controls class="audio-player">
+        <source src="${url}" type="audio/mpeg">
+        Seu navegador não suporta áudio.
+      </audio>
+    </div>
+    <img src="images/avatar.jpg" class="audio-avatar end" alt="avatar">
   `;
 
   chat.appendChild(wrapper);
