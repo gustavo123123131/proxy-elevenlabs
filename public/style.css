@@ -322,20 +322,22 @@
   }
   
   /* bolha igual WhatsApp */
-.audio-message {
-    display: inline-flex;
+  .audio-message {
+    display: inline-flex;       /* para encolher ao conteúdo */
+    width: fit-content;         /* shrink‑wrap */
     align-items: center;
     background: #2f3337;
     border-radius: 24px;
     padding: 6px 8px;
     gap: 8px;
-  }
+    margin: 8px 0;              /* espaço só acima/abaixo */
+  }  
   
   /* botão ▶️ */
   .play-button {
     border: none;
     background: none;
-    color: #00A884;
+    color: #acacac;
     font-size: 20px;
     cursor: pointer;
   }
