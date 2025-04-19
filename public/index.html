@@ -102,19 +102,6 @@
       });
     }
 
-    function addBotAudioMessage(url) {
-      const chat = document.querySelector('.chat-content');
-      const wrapper = document.createElement('div');
-      wrapper.className = 'bot-msg';
-      wrapper.innerHTML = `
-        <audio controls class="audio-player">
-          <source src="${url}" type="audio/mpeg">
-          Seu navegador não suporta áudio.
-        </audio>
-      `;
-      chat.appendChild(wrapper);
-    }
-
     window.addEventListener('DOMContentLoaded', async () => {
       try {
         addBotAudioMessage('/audios/qual-seu-nome.mp3');
@@ -148,6 +135,8 @@
         alert('Erro ao gerar o áudio. Tenta de novo aí, filhote.');
       }
     });
-  </script src="script.js"></script>
+  </script>
+
+  <script src="js/script.js"></script>
 </body>
 </html>
