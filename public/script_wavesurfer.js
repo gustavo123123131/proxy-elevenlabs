@@ -39,12 +39,18 @@ async function addBotAudioMessage(url) {
     normalize: true
   });
 
+  wavesurfer.on('error', (e) => {
+    console.error('WaveSurfer erro:', e);
+  });
+
   wavesurfer.load(url);
 
   const playBtn = wrapper.querySelector('.play-button');
   playBtn.disabled = true;
+
   wavesurfer.on('ready', () => {
     playBtn.disabled = false;
+    console.log("✔️ Onda pronta para exibir");
   });
 
   playBtn.addEventListener('click', () => {
@@ -73,7 +79,8 @@ document.querySelector('.send-button').addEventListener('click', async () => {
     const res = await fetch(`/api/voz?nome=${encodeURIComponent(nome)}`);
     if (!res.ok) throw new Error('Erro ao buscar áudio');
     const blob = await res.blob();
-    const url = URL.createObjectURL(blob);
+    const file = new File([blob], "voz.mp3", { type: "audio/mpeg" });
+    const url = URL.createObjectURL(file);
 
     await addBotAudioMessage(url);
   } catch (err) {
