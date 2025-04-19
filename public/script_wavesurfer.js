@@ -16,14 +16,14 @@ async function addBotAudioMessage(url) {
 
   const waveId = `waveform-${Date.now()}`;
 
-  wrapper.innerHTML = \`
+  wrapper.innerHTML = `
     <img src="images/avatar.jpg" class="audio-avatar" alt="avatar">
     <div class="audio-bubble">
-      <div id="\${waveId}" class="waveform-static"></div>
+      <div id="${waveId}" class="waveform-static"></div>
       <button class="play-button">▶️</button>
     </div>
     <img src="images/avatar.jpg" class="audio-avatar end" alt="avatar">
-  \`;
+  `;
 
   chat.appendChild(wrapper);
   chat.scrollTop = chat.scrollHeight;
@@ -42,18 +42,21 @@ async function addBotAudioMessage(url) {
   wavesurfer.load(url);
 
   const playBtn = wrapper.querySelector('.play-button');
+  playBtn.disabled = true;
+  wavesurfer.on('ready', () => {
+    playBtn.disabled = false;
+  });
+
   playBtn.addEventListener('click', () => {
     wavesurfer.playPause();
     playBtn.textContent = wavesurfer.isPlaying() ? '⏸️' : '▶️';
   });
 }
 
-// Ao carregar a página
 window.addEventListener('DOMContentLoaded', async () => {
   await addBotAudioMessage('/audios/qual-seu-nome.mp3');
 });
 
-// Ao enviar o nome
 document.querySelector('.send-button').addEventListener('click', async () => {
   const input = document.querySelector('.message-input');
   const nome = input.value.trim();
@@ -67,7 +70,7 @@ document.querySelector('.send-button').addEventListener('click', async () => {
   input.value = '';
 
   try {
-    const res = await fetch(\`/api/voz?nome=\${encodeURIComponent(nome)}\`);
+    const res = await fetch(`/api/voz?nome=${encodeURIComponent(nome)}`);
     if (!res.ok) throw new Error('Erro ao buscar áudio');
     const blob = await res.blob();
     const url = URL.createObjectURL(blob);
